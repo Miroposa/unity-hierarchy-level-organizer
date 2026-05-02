@@ -1,34 +1,36 @@
 # Unity Hierarchy Level Organizer
 
-Small **Unity Editor** script that groups messy root-level (and loose `Environment`) objects into empty GameObject “folders” under **`Environment`**:
+Small **Unity Editor** utility that:
 
-`Terrain` · `Buildings` · `Roads` · `Fences` · `Nature` · `Props`
+1. **Sorts** loose level objects under an **`Environment`** root into empty GameObject “folders”:
+   `Terrain` · `Buildings` · `Roads` · `Fences` · `Nature` · `Props` (rules in `Categorize`, easy to change).
+2. **Groups duplicate names** – siblings like `Tree_0`, `Tree_0 (1)`, `Tree_0 (2)` (and `… (Clone)`) are parented under a shared empty object: **`BaseName · Group`**.
 
-Name matching is prefix/rule-based (tile layers, houses, roads, fences, trees, props, etc.). **Undo** is supported.
-
-**Requirements:** Unity 2021.3+ (uses `Undo.SetTransformParent`; adjust if you target older editors).
+**Undo** is fully supported. **Requirements:** Unity 2021.3+ (uses `Undo.SetTransformParent`).
 
 ## Install
 
-Copy the folder:
+Copy:
 
 `Assets/Editor/HierarchyLevelOrganizer.cs`
 
-into your Unity project (keep the `Editor` folder so it only runs in the Editor).
+into your project (keep it under an `Editor` folder).
 
-## Use
+## Menus (Tools → Hierarchy)
 
-1. Open your scene.
-2. Menu: **Tools → Hierarchy → Organize Level Under Environment**
+| Command | What it does |
+|--------|----------------|
+| **Organize Level Under Environment** | (1) Groups duplicate names at the **scene root** (optional pass), (2) moves objects into `Environment/<Category>`, (3) groups duplicates again **inside** `Environment` and each category (several passes, max 16, for nested copies). |
+| **Group Duplicate Siblings In Scene** | Only step (1) + full tree under **Environment** – no category moves. Use if you only want `… · Group` folders. |
 
-If no `Environment` object exists at the scene root, one is created. Matching objects are parented under `Environment/<Category>`.
+## Tuning (other games / assets)
 
-## Customize
+At the top of the script:
 
-Edit `HierarchyLevelOrganizer.cs`:
-
-- **`SkipRoots`** — root objects that must never be moved (add your player root, managers, etc.).
-- **`Categorize`** — add or change string rules for your asset naming.
+- **`SkipRoots`** – never move or group these object **names** (add your player rig, `GameManager`, etc.).
+- **`FolderNames` / `Categorize(...)`** – change prefixes and rules to match your naming.  
+  Group folders like `foo · Group` are recognized: categorization uses the name **without** ` · Group` and without ` (n)`.
+- **`GroupSuffix`**, **`EnvironmentRootName`** – constants if you need different labels.
 
 ## License
 
@@ -38,4 +40,6 @@ MIT — see [LICENSE](LICENSE).
 
 ## Deutsch
 
-Skript für die **Hierarchy**: sortiert lose Objekte unter **`Environment`** in Unterordner (**Terrain**, **Buildings**, …). Menü: **Tools → Hierarchy → Organize Level Under Environment**. Anpassungen in `SkipRoots` und `Categorize`.
+- **Level unter Environment ordnen** – Kategorien + Duplikate (Root + unter `Environment`).
+- **Nur doppelte Geschwister gruppieren** – nur `Name`/`Name (1)`/… unter `… · Group`, **ohne** in Terrain/Buildings/… zu sortieren.
+- Anpassung: `SkipRoots`, `Categorize`, `GroupSuffix` in `HierarchyLevelOrganizer.cs`.
